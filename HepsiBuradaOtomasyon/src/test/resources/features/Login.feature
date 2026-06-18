@@ -9,7 +9,7 @@ Feature: Hepsiburada Giriş İşlemleri
   Scenario: Geçersiz email formatı ile giriş yapılamaması
     Given kullanıcı Hepsiburada ana sayfasındadır
     And kullanıcı giriş yap bağlantısına tıklar
-    When kullanıcı geçersiz formatta "asdadasdasd" ve "sifre123" ile giriş yapar
+    When kullanıcı geçersiz formatta "asdadasdasd" ile giriş yapar
     Then geçerli email uyarısı görüntülenmelidir
     
   Scenario: Şifremi unuttum sayfasına yönlendirme

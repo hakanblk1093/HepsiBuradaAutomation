@@ -1,16 +1,19 @@
 package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class LoginPage extends BasePage {
 
     private final By emailInput = By.id("txtUserName");
     private final By passwordInput = By.id("txtPassword");
     private final By loginButton = By.id("btnLogin");
+    private final By errorMessage = By.cssSelector("[data-test-id='inline-alert-label']");
     private final By emailValidationMessage = By.xpath("(//div[contains(.,'e-posta adresi girmelisiniz')])[last()]");
-    private final By errorMessage = By.cssSelector("[data-test-id='inline-alert-label']");    private final By forgotPasswordLink = By.xpath("//span[contains(text(),'ifremi unuttum')]");
+    private final By forgotPasswordLink = By.xpath("//span[contains(text(),'ifremi unuttum')]");
     private final By forgotPasswordTitle = By.xpath("//h1[contains(text(),'ifre yenileme')]");
-    private final By accountName = By.cssSelector("span.sf-OldMyAccount-sS_G2sunmDtZl9Tld5PR");
 
     public void enterEmail(String email) {
         type(emailInput, email);
@@ -24,31 +27,32 @@ public class LoginPage extends BasePage {
         jsClick(loginButton);
     }
 
-    public String getErrorMessage() {
-        return getText(errorMessage);
-    }
-
     public void login(String email, String password) {
         enterEmail(email);
         enterPassword(password);
         clickLoginButton();
     }
-    public String getEmailValidationMessage() 
-    {
-    return getText(emailValidationMessage);
-    }
+
     public void enterInvalidEmailAndBlur(String email) {
-        org.openqa.selenium.WebElement emailField =wait.until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated(emailInput));
+        WebElement emailField = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(emailInput));
         emailField.sendKeys(email);
-        emailField.sendKeys(org.openqa.selenium.Keys.TAB);
+        emailField.sendKeys(Keys.TAB);
+    }
+
+    public String getErrorMessage() {
+        return getText(errorMessage);
+    }
+
+    public String getEmailValidationMessage() {
+        return getText(emailValidationMessage);
     }
 
     public void clickForgotPassword() {
-    jsClick(forgotPasswordLink);
+        jsClick(forgotPasswordLink);
     }
 
-   public String getForgotPasswordTitle() {
-    return getText(forgotPasswordTitle);
-   }
-
+    public String getForgotPasswordTitle() {
+        return getText(forgotPasswordTitle);
+    }
 }

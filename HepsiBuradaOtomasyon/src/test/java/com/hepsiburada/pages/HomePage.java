@@ -8,6 +8,7 @@ public class HomePage extends BasePage {
     private final By acceptCookies = By.id("hb-accept-all");
     private final By accountMenu = By.id("myAccount");
     private final By loginLink = By.id("login");
+    private final By registerLink= By.id("register");
 
     public void acceptCookiesIfPresent() {
         try {
@@ -20,5 +21,10 @@ public class HomePage extends BasePage {
     public void clickLoginLink() {
     hover(accountMenu);
     jsClick(loginLink);
-}
+    }
+
+    public void clickRegisterLink() {
+        hover(accountMenu);
+        jsClick(registerLink);
+    }
 }

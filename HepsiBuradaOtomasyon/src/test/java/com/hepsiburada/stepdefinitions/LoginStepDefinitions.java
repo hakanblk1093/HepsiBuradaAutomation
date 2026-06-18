@@ -1,5 +1,4 @@
 package com.hepsiburada.stepdefinitions;
-import com.hepsiburada.utils.ConfigReader;
 import com.hepsiburada.pages.HomePage;
 import com.hepsiburada.pages.LoginPage;
 import com.hepsiburada.utils.DriverManager;
@@ -36,10 +35,10 @@ public class LoginStepDefinitions {
         Assertions.assertFalse(error.isEmpty(), "Hata mesajı görüntülenmedi");
     }
 
-   @When("kullanıcı geçersiz formatta {string} ve {string} ile giriş yapar")
-    public void kullanici_gecersiz_formatta_giris_yapar(String email, String password) {
+    @When("kullanıcı geçersiz formatta {string} ile giriş yapar")
+    public void kullanici_gecersiz_formatta_giris_yapar(String email) {
         loginPage.enterInvalidEmailAndBlur(email);
-   }
+    }
 
     @Then("geçerli email uyarısı görüntülenmelidir")
     public void gecerli_email_uyarisi_goruntulenir() {
