@@ -1,7 +1,6 @@
 package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class RegisterPage extends BasePage {
@@ -10,10 +9,6 @@ public class RegisterPage extends BasePage {
     private final By clickContinue = By.id("btnSignUpSubmit");
     private final By emailValidationMessage = By.xpath("(//div[contains(.,'girmelisiniz')])[last()]");
 
-
-    public void enterEmail(String email){
-        type(emailInput, email);
-    }
 
     public void clickContinue(){
         jsClick(clickContinue);
