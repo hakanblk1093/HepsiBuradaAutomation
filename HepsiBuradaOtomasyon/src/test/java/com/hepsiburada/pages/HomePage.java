@@ -1,6 +1,8 @@
 package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class HomePage extends BasePage {
@@ -9,6 +11,7 @@ public class HomePage extends BasePage {
     private final By accountMenu = By.id("myAccount");
     private final By loginLink = By.id("login");
     private final By registerLink= By.id("register");
+    private final By searchInput = By.cssSelector("[data-test-id='search-bar-input']");
 
     public void acceptCookiesIfPresent() {
         try {
@@ -26,5 +29,10 @@ public class HomePage extends BasePage {
     public void clickRegisterLink() {
         hover(accountMenu);
         jsClick(registerLink);
+    }
+
+    public void searchProduct(String query) {
+        WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(searchInput));
+        input.sendKeys(query + Keys.ENTER);
     }
 }
