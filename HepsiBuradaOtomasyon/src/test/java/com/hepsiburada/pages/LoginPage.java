@@ -4,6 +4,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class LoginPage extends BasePage {
 
@@ -25,6 +28,15 @@ public class LoginPage extends BasePage {
 
     public void clickLoginButton() {
         jsClick(loginButton);
+    }
+
+    public boolean isLoginPageOpened() {
+        return new WebDriverWait(driver, Duration.ofSeconds(20)).until(d -> {
+            String url = d.getCurrentUrl();
+            return url.contains("giris.hepsiburada.com")
+                    || url.contains("oauth.hepsiburada.com")
+                    || url.contains("/uyelik/giris");
+        });
     }
 
     public void login(String email, String password) {
