@@ -1,9 +1,7 @@
 package com.hepsiburada.pages;
 
 import com.hepsiburada.utils.DriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,6 +13,32 @@ public class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected Actions actions;
+    private static final String DEEP_TEXT_SEARCH_SCRIPT =
+            "function deepFind(root, text) {\n" +
+                    "  const stack = [root];\n" +
+                    "  while (stack.length) {\n" +
+                    "    const node = stack.pop();\n" +
+                    "    if (node.shadowRoot) stack.push(node.shadowRoot);\n" +
+                    "    const children = node.children || [];\n" +
+                    "    for (let i = 0; i < children.length; i++) stack.push(children[i]);\n" +
+                    "    if (node.nodeType === 1 && node.textContent &&\n" +
+                    "        node.textContent.toLowerCase().includes(text.toLowerCase())) {\n" +
+                    "      return node;\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "  return null;\n" +
+                    "}\n" +
+                    "return deepFind(document.body, arguments[0]);";
+
+    protected String waitForShadowDomText(String textFragment, Duration timeout) {
+        try {
+            WebElement el = new WebDriverWait(driver, timeout).until(d ->
+                    (WebElement) ((JavascriptExecutor) d).executeScript(DEEP_TEXT_SEARCH_SCRIPT, textFragment));
+            return el.getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
 
     public BasePage() {
         this.driver = DriverManager.getDriver();

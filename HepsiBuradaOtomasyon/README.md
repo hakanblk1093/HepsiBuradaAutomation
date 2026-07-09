@@ -1,6 +1,6 @@
 # Hepsiburada BDD Test Otomasyon Projesi
 
-Hepsiburada web sitesi üzerinde Behavior Driven Development (BDD) yaklaşımıyla geliştirilmiş bir test otomasyon projesidir. Selenium WebDriver ve Cucumber kullanılarak kullanıcı giriş senaryoları otomatize edilmiştir.
+Hepsiburada web sitesi üzerinde Behavior Driven Development (BDD) yaklaşımıyla geliştirilmiş bir test otomasyon projesidir. Selenium WebDriver ve Cucumber kullanılarak kullanıcı giriş, üyelik ve ürün arama senaryoları otomatize edilmiştir.
 
 ## Kullanılan Teknolojiler
 
@@ -14,17 +14,29 @@ Hepsiburada web sitesi üzerinde Behavior Driven Development (BDD) yaklaşımıy
 
 Proje, Page Object Model (POM) tasarım deseni ile yapılandırılmıştır.
 
-- **pages/** — Page Object sınıfları (BasePage, HomePage, LoginPage)
+- **pages/** — Page Object sınıfları (BasePage, HomePage, LoginPage, RegisterPage, SearchPage)
 - **stepdefinitions/** — Cucumber step tanımları ve Hooks (ekran görüntüsü dahil)
 - **runners/** — CucumberRunner test çalıştırıcı
 - **utils/** — DriverManager ve ConfigReader yardımcı sınıfları
-- **resources/features/** — Gherkin senaryoları (Login.feature)
+- **resources/features/** — Gherkin senaryoları (Login.feature, Register.feature, Search.feature)
 
 ## Test Senaryoları
+
+### Giriş (Login)
 
 1. **Geçersiz bilgilerle giriş** — Yanlış email ve şifre girildiğinde hata mesajı doğrulanır.
 2. **Geçersiz email formatı** — Hatalı formatta email girildiğinde validasyon uyarısı doğrulanır.
 3. **Şifremi unuttum yönlendirmesi** — Bağlantının şifre yenileme sayfasına yönlendirdiği doğrulanır.
+
+### Üyelik (Register)
+
+1. **Üye Ol sayfasına yönlendirme** — Üye ol bağlantısına tıklandığında üye ol sayfasının açıldığı doğrulanır.
+2. **Boş email ile üye olunamaması** — Email girilmeden devam edildiğinde zorunluluk uyarısının görüntülendiği doğrulanır.
+
+### Arama (Search)
+
+1. **Geçerli bir ürün adıyla arama** — Arama kutusuna "iphone" yazılıp arama yapıldığında sonuç listesinin görüntülendiği doğrulanır.
+2. **Sonuç bulunamayan arama** — Anlamsız bir metinle arama yapıldığında hiç ürün listelenmediği doğrulanır.
 
 ## Öne Çıkan Özellikler
 

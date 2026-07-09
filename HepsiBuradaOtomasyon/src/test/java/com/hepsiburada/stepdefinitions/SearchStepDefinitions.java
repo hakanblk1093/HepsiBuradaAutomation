@@ -22,6 +22,7 @@ public class SearchStepDefinitions {
     @Then("arama sonuçları listelenmelidir")
     public void arama_sonuclari_listelenmelidir() {
         List<WebElement> titles = searchPage.getProductTitles();
+
         Assertions.assertFalse(titles.isEmpty(), "Arama sonucu ürün listelenmedi");
     }
 }
