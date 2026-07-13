@@ -12,6 +12,7 @@ public class HomePage extends BasePage {
     private final By loginLink = By.id("login");
     private final By registerLink= By.id("register");
     private final By searchInput = By.cssSelector("[data-test-id='search-bar-input']");
+    private final By cartItemCount = By.id("cartItemCount");
 
     public void acceptCookiesIfPresent() {
         try {
@@ -34,5 +35,9 @@ public class HomePage extends BasePage {
     public void searchProduct(String query) {
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(searchInput));
         input.sendKeys(query + Keys.ENTER);
+    }
+
+    public String getCartItemCount() {
+        return getText(cartItemCount);
     }
 }
