@@ -44,4 +44,14 @@ public class CartStepDefinitions {
         String message = cartPage.getEmptyCartMessage();
         Assertions.assertTrue(message.contains("boş"), "Sepetin boş olduğu mesajı görüntülenmedi");
     }
+
+    @And("kullanıcı sepette ürün adedini artırır")
+    public void kullanici_sepette_urun_adedini_artirir() {
+        cartPage.clickIncreaseQuantityButton();
+    }
+
+    @Then("sepetteki ürün adedi {string} olmalıdır")
+    public void sepetteki_urun_adedi_dogrulanir(String expectedQuantity) {
+        Assertions.assertEquals(expectedQuantity, cartPage.getProductQuantity(), "Sepetteki ürün adedi beklenenle eşleşmiyor");
+    }
 }

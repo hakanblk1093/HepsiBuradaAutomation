@@ -18,3 +18,13 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı sepete git bağlantısına tıklar
     And kullanıcı sepetten ürünü çıkarır
     Then sepetin boş olduğu mesajı görüntülenmelidir
+
+  Scenario: Sepette ürün adedinin artırılması
+
+    Given kullanıcı Hepsiburada ana sayfasındadır
+    When kullanıcı arama kutusuna "iphone" yazıp arama yapar
+    And kullanıcı arama sonucundaki ilk ürüne tıklar
+    And kullanıcı ürün detay sayfasında sepete ekle butonuna tıklar
+    And kullanıcı sepete git bağlantısına tıklar
+    And kullanıcı sepette ürün adedini artırır
+    Then sepetteki ürün adedi "2" olmalıdır
