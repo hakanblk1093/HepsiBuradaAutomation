@@ -13,6 +13,7 @@ public class ProductDetailPage extends BasePage {
     private final By favoriteButton = By.cssSelector("[class^='customerAccount-Like-']");
     private final By addToCartButton = By.cssSelector("[data-test-id='addToCart']");
     private final By cartConfirmationMessage = By.xpath("//span[contains(text(),'sepetinizde')]");
+    private final By goToCartLink = By.xpath("//*[contains(text(),'Sepete git')]");
 
     public String getProductTitle() {
         return getText(productTitle);
@@ -38,5 +39,11 @@ public class ProductDetailPage extends BasePage {
         return new WebDriverWait(driver, Duration.ofSeconds(15))
                 .until(ExpectedConditions.visibilityOfElementLocated(cartConfirmationMessage))
                 .getText();
+    }
+
+    public void clickGoToCartLink() {
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.presenceOfElementLocated(goToCartLink));
+        jsClick(goToCartLink);
     }
 }
