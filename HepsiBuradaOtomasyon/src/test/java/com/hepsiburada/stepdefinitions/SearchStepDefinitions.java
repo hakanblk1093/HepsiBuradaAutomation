@@ -25,4 +25,10 @@ public class SearchStepDefinitions {
 
         Assertions.assertFalse(titles.isEmpty(), "Arama sonucu ürün listelenmedi");
     }
+
+    @Then("sonuç bulunamadı mesajı görüntülenmelidir")
+    public void sonuc_bulunamadi_mesaji_goruntulenir() {
+        String message = searchPage.getNoResultsMessage();
+        Assertions.assertFalse(message.isEmpty(), "Sonuç bulunamadı mesajı görüntülenmedi");
+    }
 }

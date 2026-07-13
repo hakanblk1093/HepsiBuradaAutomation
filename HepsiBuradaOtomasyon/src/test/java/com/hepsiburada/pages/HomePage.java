@@ -2,8 +2,14 @@ package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 public class HomePage extends BasePage {
 
@@ -35,6 +41,13 @@ public class HomePage extends BasePage {
     public void searchProduct(String query) {
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(searchInput));
         input.sendKeys(query + Keys.ENTER);
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/ara"));
+        } catch (TimeoutException e) {
+            // Öneri bulunamayan sorgularda Enter arama sayfasına yönlendirmiyor
+            String encoded = URLEncoder.encode(query, StandardCharsets.UTF_8);
+            driver.navigate().to("https://www.hepsiburada.com/ara?q=" + encoded);
+        }
     }
 
     public String getCartItemCount() {
