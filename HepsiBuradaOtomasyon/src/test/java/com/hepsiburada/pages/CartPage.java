@@ -11,6 +11,7 @@ public class CartPage extends BasePage {
     private final By removeButton = By.cssSelector("a[aria-label='Sepetten Çıkar']");
     private final By emptyCartMessage = By.xpath("//*[contains(text(),'Sepetin şu an boş')]");
     private final By increaseQuantityButton = By.cssSelector("a[aria-label='Ürünü Arttır']");
+    private final By decreaseQuantityButton = By.cssSelector("a[aria-label='Ürünü Azalt']");
     private final By quantityInput = By.cssSelector("input[name='quantity']");
 
     public void clickRemoveButton() {
@@ -29,6 +30,12 @@ public class CartPage extends BasePage {
         new WebDriverWait(driver, Duration.ofSeconds(20))
                 .until(ExpectedConditions.elementToBeClickable(increaseQuantityButton));
         jsClick(increaseQuantityButton);
+    }
+
+    public void clickDecreaseQuantityButton() {
+        new WebDriverWait(driver, Duration.ofSeconds(20))
+                .until(ExpectedConditions.elementToBeClickable(decreaseQuantityButton));
+        jsClick(decreaseQuantityButton);
     }
 
     public String getQuantityValue() {

@@ -50,6 +50,11 @@ public class CartStepDefinitions {
         cartPage.clickIncreaseQuantityButton();
     }
 
+    @And("kullanıcı sepette ürün adedini azaltır")
+    public void kullanici_urun_adedini_azaltir() {
+        cartPage.clickDecreaseQuantityButton();
+    }
+
     @Then("sepetteki ürün adedi {string} olmalıdır")
     public void sepetteki_urun_adedi_dogrulanir(String expectedQuantity) {
         cartPage.waitForQuantityValue(expectedQuantity);
