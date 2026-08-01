@@ -22,7 +22,7 @@ public class HomePage extends BasePage {
 
     public void acceptCookiesIfPresent() {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(acceptCookies)).click();
+            click(acceptCookies, Duration.ofSeconds(3));
         } catch (Exception e) {
             // Çerez popup'ı çıkmadıysa devam et
         }
@@ -52,5 +52,14 @@ public class HomePage extends BasePage {
 
     public String getCartItemCount() {
         return getText(cartItemCount);
+    }
+
+    public void waitForCartItemCount(String expectedCount) {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(10))
+                    .until(d -> expectedCount.equals(getCartItemCount()));
+        } catch (TimeoutException e) {
+            // Beklenen değere ulaşılmadıysa assert'in gerçek farkı raporlamasına izin ver
+        }
     }
 }

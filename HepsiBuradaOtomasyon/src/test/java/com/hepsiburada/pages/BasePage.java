@@ -46,8 +46,14 @@ public class BasePage {
         this.actions = new Actions(driver);
     }
 
+
+
     protected void click(By locator) {
         wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
+    }
+
+    protected void click(By locator, Duration timeout) {
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.elementToBeClickable(locator)).click();
     }
 
     protected void type(By locator, String text) {

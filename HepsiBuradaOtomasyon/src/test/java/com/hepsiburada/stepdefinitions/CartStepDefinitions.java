@@ -26,6 +26,7 @@ public class CartStepDefinitions {
 
     @And("sepet simgesindeki ürün sayısı {string} olmalıdır")
     public void sepet_urun_sayisi_dogrulanir(String expectedCount) {
+        homePage.waitForCartItemCount(expectedCount);
         Assertions.assertEquals(expectedCount, homePage.getCartItemCount(), "Sepetteki ürün sayısı beklenenle eşleşmiyor");
     }
 
