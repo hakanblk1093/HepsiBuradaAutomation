@@ -33,9 +33,10 @@ public class LoginPage extends BasePage {
     public boolean isLoginPageOpened() {
         return new WebDriverWait(driver, Duration.ofSeconds(20)).until(d -> {
             String url = d.getCurrentUrl();
-            return url.contains("giris.hepsiburada.com")
+            return url != null
+                    && (url.contains("giris.hepsiburada.com")
                     || url.contains("oauth.hepsiburada.com")
-                    || url.contains("/uyelik/giris");
+                    || url.contains("/uyelik/giris"));
         });
     }
 

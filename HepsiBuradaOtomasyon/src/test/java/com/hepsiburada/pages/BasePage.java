@@ -1,7 +1,11 @@
 package com.hepsiburada.pages;
 
 import com.hepsiburada.utils.DriverManager;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -10,9 +14,6 @@ import java.time.Duration;
 
 public class BasePage {
 
-    protected WebDriver driver;
-    protected WebDriverWait wait;
-    protected Actions actions;
     private static final String DEEP_TEXT_SEARCH_SCRIPT =
             "function deepFind(root, text) {\n" +
                     "  const stack = [root];\n" +
@@ -30,15 +31,9 @@ public class BasePage {
                     "}\n" +
                     "return deepFind(document.body, arguments[0]);";
 
-    protected String waitForShadowDomText(String textFragment, Duration timeout) {
-        try {
-            WebElement el = new WebDriverWait(driver, timeout).until(d ->
-                    (WebElement) ((JavascriptExecutor) d).executeScript(DEEP_TEXT_SEARCH_SCRIPT, textFragment));
-            return el.getText();
-        } catch (TimeoutException e) {
-            return "";
-        }
-    }
+    protected final WebDriver driver;
+    protected final WebDriverWait wait;
+    protected final Actions actions;
 
     public BasePage() {
         this.driver = DriverManager.getDriver();
@@ -46,10 +41,8 @@ public class BasePage {
         this.actions = new Actions(driver);
     }
 
-
-
     protected void click(By locator) {
-        wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
+        click(locator, Duration.ofSeconds(10));
     }
 
     protected void click(By locator, Duration timeout) {
@@ -71,6 +64,16 @@ public class BasePage {
 
     protected void jsClick(By locator) {
         WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+    }
+
+    protected String waitForShadowDomText(String textFragment, Duration timeout) {
+        try {
+            WebElement el = new WebDriverWait(driver, timeout).until(d ->
+                    (WebElement) ((JavascriptExecutor) d).executeScript(DEEP_TEXT_SEARCH_SCRIPT, textFragment));
+            return el.getText();
+        } catch (TimeoutException ignored) {
+            return "";
+        }
     }
 }
