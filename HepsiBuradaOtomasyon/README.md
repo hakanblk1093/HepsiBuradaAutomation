@@ -18,7 +18,7 @@ Proje, Page Object Model (POM) tasarım deseni ile yapılandırılmıştır.
 - **stepdefinitions/** — Cucumber step tanımları ve Hooks (ekran görüntüsü dahil)
 - **runners/** — CucumberRunner test çalıştırıcı
 - **utils/** — DriverManager ve ConfigReader yardımcı sınıfları
-- **resources/features/** — Gherkin senaryoları (Login.feature, Register.feature, Search.feature)
+- **resources/features/** — Gherkin senaryoları (Login, Register, Search, Sorting, Filter, ProductDetail, Cart, Favorites)
 
 ## Test Senaryoları
 
@@ -37,6 +37,16 @@ Proje, Page Object Model (POM) tasarım deseni ile yapılandırılmıştır.
 
 1. **Geçerli bir ürün adıyla arama** — Arama kutusuna "iphone" yazılıp arama yapıldığında sonuç listesinin görüntülendiği doğrulanır.
 2. **Sonuç bulunamayan arama** — Anlamsız bir metinle arama yapıldığında hiç ürün listelenmediği doğrulanır.
+
+### Sıralama (Sorting)
+
+1. **En düşük fiyata göre sıralama** — Sıralama seçiminin uygulandığı ve ilk ürünün sıralama öncesine göre daha ucuz olduğu doğrulanır.
+2. **En yüksek fiyata göre sıralama** — Sıralama seçiminin uygulandığı ve ilk ürünün sıralama öncesine göre daha pahalı olduğu doğrulanır.
+
+### Filtreleme (Filter)
+
+1. **Marka filtresi uygulama** — "Apple" markası seçildiğinde uygulanan filtreler arasında göründüğü ve listelenen tüm ürünlerin bu markaya ait olduğu doğrulanır.
+2. **Marka filtresini kaldırma** — Filtre kaldırıldığında uygulanan filtre kalmadığı doğrulanır.
 
 ## Öne Çıkan Özellikler
 

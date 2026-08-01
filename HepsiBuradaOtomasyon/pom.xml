@@ -67,6 +67,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <!-- Çalıştırıcının adı surefire'ın varsayılan desenlerine (*Test, Test*) uymuyor -->
+                    <includes>
+                        <include>**/CucumberRunner.java</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
