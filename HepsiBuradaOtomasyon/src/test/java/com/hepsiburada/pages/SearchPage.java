@@ -3,6 +3,7 @@ package com.hepsiburada.pages;
 import org.openqa.selenium.By;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -29,7 +30,8 @@ public class SearchPage extends BasePage {
 
     public void clickFirstProduct() {
         String urlBefore = driver.getCurrentUrl();
-        jsClick(firstProductLink);
+        wait.until(ExpectedConditions.presenceOfElementLocated(productTitles));
+        clickFirstNavigableProductLink();
         try {
             new WebDriverWait(driver, Duration.ofSeconds(5)).until(d -> !Objects.equals(d.getCurrentUrl(), urlBefore));
         } catch (TimeoutException e) {
@@ -39,8 +41,20 @@ public class SearchPage extends BasePage {
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", banner);
             } catch (Exception ignored) {
             }
-            jsClick(firstProductLink);
+            clickFirstNavigableProductLink();
         }
+    }
+
+    /**
+     * Reklam/sponsorlu ürün kartlarının başlık linki gerçek ürün sayfasına gitmiyor (href yok),
+     * bu yüzden ilk eşleşen değil, href'i dolu olan ilk gerçek ürün linki tıklanır.
+     */
+    private void clickFirstNavigableProductLink() {
+        WebElement link = driver.findElements(firstProductLink).stream()
+                .filter(el -> el.getAttribute("href") != null && !Objects.requireNonNull(el.getAttribute("href")).isEmpty())
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Tıklanabilir (href'li) bir ürün linki bulunamadı"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", link);
     }
 
     public List<WebElement> getProductTitles() {
@@ -117,7 +131,7 @@ public class SearchPage extends BasePage {
     }
 
     private boolean filterCleared() {
-        return !driver.getCurrentUrl().contains("markalar=") && getAppliedFilterNames().isEmpty();
+        return !Objects.requireNonNull(driver.getCurrentUrl()).contains("markalar=") && getAppliedFilterNames().isEmpty();
     }
 
     private void reloadResults() {
