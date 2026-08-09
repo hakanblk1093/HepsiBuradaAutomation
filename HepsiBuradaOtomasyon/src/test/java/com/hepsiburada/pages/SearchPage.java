@@ -2,6 +2,7 @@ package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
 
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -71,7 +72,12 @@ public class SearchPage extends BasePage {
         String firstPriceBefore = firstProductPriceText();
         click(sortDropdownToggle);
         By option = By.xpath("//*[@data-test-id='dropdown-content']//a[normalize-space(.)='" + optionLabel + "']");
-        click(option);
+        try {
+            click(option);
+        } catch (ElementClickInterceptedException e) {
+            // Geç yüklenen bir reklam katmanı tıklamayı engelleyebiliyor, bu durumda JS click ile atla
+            jsClick(option);
+        }
         // Sıralama seçimi arama sonuçlarını "siralama" parametresiyle yeniden yükler
         new WebDriverWait(driver, Duration.ofSeconds(20))
                 .until(ExpectedConditions.urlContains("siralama="));
@@ -137,6 +143,8 @@ public class SearchPage extends BasePage {
     private void reloadResults() {
         driver.navigate().refresh();
         waitForResultsPageReady();
+        // Sıralama dropdown'ı yenileme sonrası geç render edilebiliyor, sonraki okumalar için hazır olmasını bekle
+        wait.until(ExpectedConditions.presenceOfElementLocated(sortDropdownToggle));
     }
 
     /**

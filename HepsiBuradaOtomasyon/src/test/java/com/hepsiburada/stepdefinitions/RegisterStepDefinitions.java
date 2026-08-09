@@ -33,4 +33,15 @@ public class RegisterStepDefinitions {
         String validation = registerPage.getEmailValidationMessage();
         Assertions.assertFalse(validation.isEmpty(), "Email zorunluluk uyarısı görüntülenmedi");
     }
+
+    @And("kullanıcı üye ol sayfasında geçersiz formatta {string} ile devam eder")
+    public void kullanici_uye_ol_gecersiz_formatta_devam_eder(String email) {
+        registerPage.enterInvalidEmailAndBlur(email);
+    }
+
+    @Then("geçerli email formatı uyarısı görüntülenmelidir")
+    public void gecerli_email_formati_uyarisi_goruntulenir() {
+        String validation = registerPage.getEmailValidationMessage();
+        Assertions.assertFalse(validation.isEmpty(), "Email formatı uyarısı görüntülenmedi");
+    }
 }

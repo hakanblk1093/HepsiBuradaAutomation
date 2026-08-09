@@ -1,6 +1,8 @@
 package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class RegisterPage extends BasePage {
@@ -12,6 +14,12 @@ public class RegisterPage extends BasePage {
 
     public void clickContinue(){
         jsClick(clickContinue);
+    }
+
+    public void enterInvalidEmailAndBlur(String email) {
+        WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
+        emailField.sendKeys(email);
+        emailField.sendKeys(Keys.TAB);
     }
 
     public boolean isRegisterPageOpened() {

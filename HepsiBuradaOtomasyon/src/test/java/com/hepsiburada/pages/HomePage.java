@@ -62,4 +62,19 @@ public class HomePage extends BasePage {
             // Beklenen değere ulaşılmadıysa assert'in gerçek farkı raporlamasına izin ver
         }
     }
+
+    public void pressEnterInEmptySearchBox() {
+        WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(searchInput));
+        input.sendKeys(Keys.ENTER);
+    }
+
+    /** Boş arama sonrası site hiçbir yere yönlendirmiyor; bu yüzden "yönlendirme olmadı" zaman aşımıyla doğrulanıyor */
+    public boolean staysOnHomePage() {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(3)).until(ExpectedConditions.urlContains("/ara"));
+            return false;
+        } catch (TimeoutException e) {
+            return true;
+        }
+    }
 }

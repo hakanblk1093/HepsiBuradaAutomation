@@ -48,4 +48,11 @@ public class CartPage extends BasePage {
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(d -> expectedValue.equals(getQuantityValue()));
     }
+
+    /** Adet 1 iken azaltma butonu DOM'dan tamamen kaldırılıyor (disabled değil, yok) */
+    public boolean isDecreaseButtonPresent() {
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.visibilityOfElementLocated(quantityInput));
+        return !driver.findElements(decreaseQuantityButton).isEmpty();
+    }
 }

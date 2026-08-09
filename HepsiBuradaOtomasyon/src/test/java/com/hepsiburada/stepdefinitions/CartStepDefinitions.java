@@ -57,8 +57,14 @@ public class CartStepDefinitions {
     }
 
     @Then("sepetteki ürün adedi {string} olmalıdır")
+
     public void sepetteki_urun_adedi_dogrulanir(String expectedQuantity) {
         cartPage.waitForQuantityValue(expectedQuantity);
         Assertions.assertEquals(expectedQuantity, cartPage.getQuantityValue(), "Sepetteki ürün adedi beklenenle eşleşmiyor");
+    }
+
+    @Then("sepette ürün adedi azaltma butonu görüntülenmemelidir")
+    public void sepette_azaltma_butonu_gorunmemelidir() {
+        Assertions.assertFalse(cartPage.isDecreaseButtonPresent(), "Ürün adedi 1 iken azaltma butonu hâlâ görüntüleniyor");
     }
 }

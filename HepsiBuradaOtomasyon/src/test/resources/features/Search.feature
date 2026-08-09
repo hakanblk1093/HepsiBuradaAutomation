@@ -9,3 +9,8 @@ Feature: Hepsiburada Ürün Arama İşlemleri
     Given kullanıcı Hepsiburada ana sayfasındadır
     When kullanıcı arama kutusuna "asdkjfhqwlekjhasdf123456789xyz" yazıp arama yapar
     Then sonuç bulunamadı mesajı görüntülenmelidir
+
+  Scenario: Boş arama kutusu ile arama sayfasına yönlendirilmemesi
+    Given kullanıcı Hepsiburada ana sayfasındadır
+    When kullanıcı arama kutusunu boş bırakıp arama yapar
+    Then kullanıcı arama sayfasına yönlendirilmemelidir

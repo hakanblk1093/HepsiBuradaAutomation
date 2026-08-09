@@ -40,6 +40,15 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı sepette ürün adedini azaltır
     Then sepetteki ürün adedi "1" olmalıdır
 
+  Scenario: Sepette ürün adedi 1 iken azaltma butonunun görüntülenmemesi
+
+    Given kullanıcı Hepsiburada ana sayfasındadır
+    When kullanıcı arama kutusuna "iphone" yazıp arama yapar
+    And kullanıcı arama sonucundaki ilk ürüne tıklar
+    And kullanıcı ürün detay sayfasında sepete ekle butonuna tıklar
+    And kullanıcı sepete git bağlantısına tıklar
+    Then sepette ürün adedi azaltma butonu görüntülenmemelidir
+
   Scenario: Sepete birden fazla farklı ürün eklenmesi
 
     Given kullanıcı Hepsiburada ana sayfasındadır

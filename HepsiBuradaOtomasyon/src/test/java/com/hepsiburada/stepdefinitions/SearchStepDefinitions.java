@@ -31,4 +31,14 @@ public class SearchStepDefinitions {
         String message = searchPage.getNoResultsMessage();
         Assertions.assertFalse(message.isEmpty(), "Sonuç bulunamadı mesajı görüntülenmedi");
     }
+
+    @When("kullanıcı arama kutusunu boş bırakıp arama yapar")
+    public void kullanici_bos_arama_yapar() {
+        homePage.pressEnterInEmptySearchBox();
+    }
+
+    @Then("kullanıcı arama sayfasına yönlendirilmemelidir")
+    public void kullanici_arama_sayfasina_yonlendirilmemelidir() {
+        Assertions.assertTrue(homePage.staysOnHomePage(), "Boş arama sonrası kullanıcı arama sonuçları sayfasına yönlendirildi");
+    }
 }
