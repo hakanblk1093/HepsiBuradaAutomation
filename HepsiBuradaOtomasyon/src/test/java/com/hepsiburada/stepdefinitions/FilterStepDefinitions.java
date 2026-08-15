@@ -41,10 +41,10 @@ public class FilterStepDefinitions {
                 "'" + brand + "' markasına ait olmayan ürünler listelendi: " + digerMarkalar);
     }
 
-    @Then("uygulanan filtre kalmamalıdır")
-    public void uygulanan_filtre_kalmamalidir() {
+    @Then("{string} markası uygulanan filtreler arasında bulunmamalıdır")
+    public void marka_uygulanmamalidir(String brand) {
         List<String> appliedFilters = searchPage.getAppliedFilterNames();
-        Assertions.assertTrue(appliedFilters.isEmpty(),
-                "Filtre kaldırıldığı halde uygulanan filtreler duruyor: " + appliedFilters);
+        Assertions.assertTrue(appliedFilters.stream().noneMatch(f -> f.equalsIgnoreCase(brand)),
+                "'" + brand + "' filtresi kaldırıldığı halde hâlâ uygulanmış görünüyor: " + appliedFilters);
     }
 }

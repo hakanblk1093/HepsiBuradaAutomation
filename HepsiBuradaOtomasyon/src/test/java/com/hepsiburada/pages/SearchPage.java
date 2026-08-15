@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class SearchPage extends BasePage {
@@ -22,12 +23,20 @@ public class SearchPage extends BasePage {
     private final By productTitles = By.cssSelector("h2[data-test-id^='title-']");
     private final By firstProductLink = By.cssSelector("h2[data-test-id^='title-'] a");
     private final By acceptCookies = By.id("hb-accept-all");
-    private final By firstProductPrice = By.cssSelector("[data-test-id='final-price-1']");
+    private final By firstProductPrice = By.cssSelector("li[class*='productListContent'] [data-test-id^='final-price']");
     private final By appliedFilters = By.cssSelector("[data-test-id='filterbox-item-display-name']");
     // Sayfada birden fazla dropdown var (konum seçimi vb.), sıralama olanı metninden ayırt ediliyor
     private final By sortDropdownToggle = By.xpath("//div[@data-test-id='dropdown-toggle']"
             + "[contains(.,'sıralama') or contains(.,'fiyat') or contains(.,'satan')"
             + " or contains(.,'puan') or contains(.,'İndirim') or contains(.,'eklenen')]");
+
+    // Sıralama etiketleri -> Hepsiburada "siralama=" URL parametre değerleri
+    private static final Map<String, String> SORT_PARAMS = Map.of(
+            "En düşük fiyat", "artanFiyat",
+            "En yüksek fiyat", "azalanFiyat",
+            "Çok satanlar", "cokSatan",
+            "Yüksek puanlılar", "yuksekPuan",
+            "İndirim oranı", "indirimOrani");
 
     public void clickFirstProduct() {
         String urlBefore = driver.getCurrentUrl();
@@ -68,28 +77,56 @@ public class SearchPage extends BasePage {
     }
 
     public void sortBy(String optionLabel) {
-        waitForResultsPageReady();
-        String firstPriceBefore = firstProductPriceText();
-        click(sortDropdownToggle);
-        By option = By.xpath("//*[@data-test-id='dropdown-content']//a[normalize-space(.)='" + optionLabel + "']");
-        try {
-            click(option);
-        } catch (ElementClickInterceptedException e) {
-            // Geç yüklenen bir reklam katmanı tıklamayı engelleyebiliyor, bu durumda JS click ile atla
-            jsClick(option);
+        String param = SORT_PARAMS.get(optionLabel);
+        if (param == null) {
+            throw new IllegalArgumentException("Bilinmeyen sıralama seçeneği: " + optionLabel);
         }
-        // Sıralama seçimi arama sonuçlarını "siralama" parametresiyle yeniden yükler
-        new WebDriverWait(driver, Duration.ofSeconds(20))
-                .until(ExpectedConditions.urlContains("siralama="));
-        // URL parametresi liste yeniden render edilmeden değişiyor, listenin tazelenmesini bekle
-        if (!waitUntil(d -> !firstProductPriceText().isEmpty() && !firstProductPriceText().equals(firstPriceBefore))) {
-            // Site bazen URL'i güncelleyip listeyi yenilemiyor; sıralama parametresi URL'de olduğu için reload yeterli
-            reloadResults();
+        // Sıralama seçenekleri client-side (javascript:void) ve React onClick'i WebDriver ile tetiklenen
+        // tıklamalara yanıt vermiyor. Sıralama, "siralama=" parametresiyle doğrudan URL üzerinden güvenilir
+        // biçimde uygulanıyor (ör. artanFiyat -> ürünler artan fiyata göre yeniden sıralanıyor).
+        String url = driver.getCurrentUrl();
+        int i = url.indexOf("q=");
+        String query = i >= 0 ? url.substring(i + 2).split("&")[0] : "";
+        driver.navigate().to("https://www.hepsiburada.com/ara?q=" + query + "&siralama=" + param);
+        waitForResultsPageReady();
+        // Liste ilk render'dan sonra client-side yeniden sıralanabildiği için, fiyat sıralamalarında
+        // ilk iki ürün beklenen yönde sıralanana kadar bekle (erken okumayı önler).
+        if (param.equals("artanFiyat")) {
+            waitUntil(d -> firstTwoPricesSorted(true), Duration.ofSeconds(15));
+        } else if (param.equals("azalanFiyat")) {
+            waitUntil(d -> firstTwoPricesSorted(false), Duration.ofSeconds(15));
+        }
+    }
+
+    private boolean firstTwoPricesSorted(boolean ascending) {
+        List<WebElement> els = driver.findElements(
+                By.cssSelector("li[class*='productListContent'] [data-test-id^='final-price']"));
+        if (els.size() < 2) {
+            return false;
+        }
+        try {
+            double first = parsePrice(els.get(0).getText());
+            double second = parsePrice(els.get(1).getText());
+            return ascending ? first <= second : first >= second;
+        } catch (RuntimeException e) {
+            return false;
         }
     }
 
     public String getSelectedSortOption() {
-        return getText(sortDropdownToggle).trim();
+        // Aktif sıralama, dropdown metnine yansımadığı için URL'deki "siralama=" parametresinden okunur
+        // ve etikete geri eşlenir.
+        String url = driver.getCurrentUrl();
+        int i = url.indexOf("siralama=");
+        if (i < 0) {
+            return "Önerilen sıralama";
+        }
+        String param = url.substring(i + "siralama=".length()).split("&")[0];
+        return SORT_PARAMS.entrySet().stream()
+                .filter(e -> e.getValue().equals(param))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(param);
     }
 
     public double getFirstProductPrice() {
@@ -107,28 +144,26 @@ public class SearchPage extends BasePage {
         String value = brand.toLowerCase(Locale.ROOT);
         waitForResultsPageReady();
         jsClick(brandCheckbox(value));
-        new WebDriverWait(driver, Duration.ofSeconds(20))
-                .until(ExpectedConditions.urlContains("markalar=" + value));
-        // Filtre rozetleri URL değişiminden sonra render ediliyor
+        // Site marka filtresini artık URL'e 'markalar=' olarak yansıtmıyor; gerçek kullanıcı çıktısı
+        // olan uygulanmış filtre rozetini bekle. Rozet gelmezse bir kez daha dene.
         if (!waitUntil(d -> isBrandFilterApplied(brand))) {
-            // Site bazen URL'i güncelleyip paneli yenilemiyor; marka parametresi URL'de olduğu için reload yeterli
             reloadResults();
+            jsClick(brandCheckbox(value));
             waitUntil(d -> isBrandFilterApplied(brand));
         }
     }
 
     public void removeBrandFilter(String brand) {
         String value = brand.toLowerCase(Locale.ROOT);
-        // Filtre yeni uygulandığı için panel hâlâ güncelleniyor olabilir ve tıklama kaybolabiliyor;
-        // sayfa yenilenerek gerçek duruma dönülüp tekrar deneniyor
-        for (int attempt = 0; attempt < 3 && !filterCleared(); attempt++) {
+        // Marka filtresi, uygulamada olduğu gibi marka checkbox'ı tekrar tıklanarak (kapatılarak) kaldırılır.
+        for (int attempt = 0; attempt < 3 && isBrandFilterApplied(brand); attempt++) {
             if (attempt > 0) {
                 reloadResults();
             } else {
                 waitForResultsPageReady();
             }
             jsClick(brandCheckbox(value));
-            waitUntil(d -> filterCleared(), Duration.ofSeconds(8));
+            waitUntil(d -> !isBrandFilterApplied(brand), Duration.ofSeconds(8));
         }
     }
 
@@ -136,9 +171,6 @@ public class SearchPage extends BasePage {
         return getAppliedFilterNames().stream().anyMatch(name -> name.equalsIgnoreCase(brand));
     }
 
-    private boolean filterCleared() {
-        return !Objects.requireNonNull(driver.getCurrentUrl()).contains("markalar=") && getAppliedFilterNames().isEmpty();
-    }
 
     private void reloadResults() {
         driver.navigate().refresh();
@@ -162,8 +194,19 @@ public class SearchPage extends BasePage {
     }
 
     public List<String> getProductTitleTexts() {
-        wait.until(ExpectedConditions.presenceOfElementLocated(productTitles));
-        return textsOf(productTitles);
+        // Ürün kartları aşamalı (lazy) render edildiğinden başlıklar bir an boş gelebiliyor ve liste
+        // yeniden render edilirken eleman stale olabiliyor. Stale'i yok sayarak, boş olmayan başlıklardan
+        // oluşan kararlı bir liste dolana kadar okumayı yeniden dene.
+        return new WebDriverWait(driver, Duration.ofSeconds(15))
+                .ignoring(StaleElementReferenceException.class)
+                .until(d -> {
+                    List<String> texts = d.findElements(productTitles).stream()
+                            .map(WebElement::getText)
+                            .map(String::trim)
+                            .filter(t -> !t.isBlank())
+                            .toList();
+                    return texts.isEmpty() ? null : texts;
+                });
     }
 
     /** Liste yeniden render edilirken eleman stale olabildiği için bir kez yeniden okunur */

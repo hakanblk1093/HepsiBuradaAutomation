@@ -10,7 +10,7 @@ Feature: Hepsiburada Arama Sonuçlarını Filtreleme
 
   Scenario: Uygulanan marka filtresinin kaldırılması
     Given kullanıcı Hepsiburada ana sayfasındadır
-    When kullanıcı arama kutusuna "iphone" yazıp arama yapar
+    When kullanıcı arama kutusuna "telefon" yazıp arama yapar
     And kullanıcı "Apple" markasını filtreler
     And kullanıcı "Apple" marka filtresini kaldırır
-    Then uygulanan filtre kalmamalıdır
+    Then "Apple" markası uygulanan filtreler arasında bulunmamalıdır

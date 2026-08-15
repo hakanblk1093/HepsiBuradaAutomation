@@ -1,7 +1,9 @@
 package com.hepsiburada.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -39,13 +41,15 @@ public class HomePage extends BasePage {
     }
 
     public void searchProduct(String query) {
-        WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(searchInput));
-        input.sendKeys(query + Keys.ENTER);
+        String encoded = URLEncoder.encode(query, StandardCharsets.UTF_8);
         try {
+            WebElement input = wait.until(ExpectedConditions.elementToBeClickable(searchInput));
+            input.sendKeys(query + Keys.ENTER);
             new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/ara"));
-        } catch (TimeoutException e) {
-            // Öneri bulunamayan sorgularda Enter arama sayfasına yönlendirmiyor
-            String encoded = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        } catch (TimeoutException | ElementNotInteractableException | StaleElementReferenceException e) {
+            // Ürün detay sayfasında sepete ekleme sonrası mini-sepet overlay'i arama kutusunu etkileşime
+            // kapatabiliyor; ayrıca öneri bulunamayan sorgularda Enter yönlendirmiyor. Her iki durumda da
+            // doğrudan arama sonuç sayfasına gidilir.
             driver.navigate().to("https://www.hepsiburada.com/ara?q=" + encoded);
         }
     }
