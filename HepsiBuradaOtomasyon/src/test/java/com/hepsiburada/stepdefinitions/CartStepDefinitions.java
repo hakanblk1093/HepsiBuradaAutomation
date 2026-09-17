@@ -13,6 +13,8 @@ public class CartStepDefinitions {
     private final HomePage homePage = new HomePage();
     private final CartPage cartPage = new CartPage();
 
+    private double savedLineTotal;
+
     @And("kullanıcı ürün detay sayfasında sepete ekle butonuna tıklar")
     public void kullanici_sepete_ekle_tiklar() {
         productDetailPage.clickAddToCartButton();
@@ -66,5 +68,21 @@ public class CartStepDefinitions {
     @Then("sepette ürün adedi azaltma butonu görüntülenmemelidir")
     public void sepette_azaltma_butonu_gorunmemelidir() {
         Assertions.assertFalse(cartPage.isDecreaseButtonPresent(), "Ürün adedi 1 iken azaltma butonu hâlâ görüntüleniyor");
+    }
+
+    @And("kullanıcı sepetteki ürünün tutarını kaydeder")
+    public void kullanici_sepet_tutarini_kaydeder() {
+        savedLineTotal = cartPage.getLineTotalPrice();
+    }
+
+    @Then("sepetteki toplam tutar birim tutarın {int} katı olmalıdır")
+    public void sepet_toplam_tutari_kat_olmalidir(int multiplier) {
+        cartPage.waitForQuantityValue(String.valueOf(multiplier));
+        double expected = savedLineTotal * multiplier;
+        // 1 kuruşluk yuvarlama farklarına izin ver
+        double tolerance = 0.5;
+        double actual = cartPage.waitForLineTotalNear(expected, tolerance);
+        Assertions.assertEquals(expected, actual, tolerance,
+                "Sepet toplamı adetle tutarlı değil: beklenen ≈ " + expected + ", gerçek = " + actual);
     }
 }

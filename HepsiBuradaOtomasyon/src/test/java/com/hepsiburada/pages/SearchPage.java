@@ -290,10 +290,4 @@ public class SearchPage extends BasePage {
     private By brandCheckbox(String value) {
         return By.cssSelector("input[name='markalar'][value='" + value + "']");
     }
-
-    /** "47.999 TL" -> 47999.0, "868,04 TL" -> 868.04 */
-    private double parsePrice(String raw) {
-        String normalized = raw.replaceAll("[^0-9.,]", "").replace(".", "").replace(',', '.');
-        return Double.parseDouble(normalized);
-    }
 }

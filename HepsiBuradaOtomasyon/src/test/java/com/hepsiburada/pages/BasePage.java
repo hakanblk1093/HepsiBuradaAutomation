@@ -76,4 +76,13 @@ public class BasePage {
             return "";
         }
     }
+
+    /**
+     * Türk biçimindeki fiyat metnini sayıya çevirir.
+     * "47.999 TL" -> 47999.0, "868,04 TL" -> 868.04
+     */
+    protected double parsePrice(String raw) {
+        String normalized = raw.replaceAll("[^0-9.,]", "").replace(".", "").replace(',', '.');
+        return Double.parseDouble(normalized);
+    }
 }

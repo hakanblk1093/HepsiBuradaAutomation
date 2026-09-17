@@ -1,3 +1,4 @@
+@sepet
 Feature: Hepsiburada Sepete Ekleme İşlemleri
 
   Scenario: Ürünün sepete eklenmesi ve onay mesajının görüntülenmesi
@@ -59,3 +60,15 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı arama sonucundaki ilk ürüne tıklar
     And kullanıcı ürün detay sayfasında sepete ekle butonuna tıklar
     Then sepet simgesindeki ürün sayısı "2" olmalıdır
+
+  @sepet-tutar
+  Scenario: Sepetteki toplam tutarın adet ile doğru hesaplanması
+
+    Given kullanıcı Hepsiburada ana sayfasındadır
+    When kullanıcı arama kutusuna "iphone" yazıp arama yapar
+    And kullanıcı arama sonucundaki ilk ürüne tıklar
+    And kullanıcı ürün detay sayfasında sepete ekle butonuna tıklar
+    And kullanıcı sepete git bağlantısına tıklar
+    And kullanıcı sepetteki ürünün tutarını kaydeder
+    And kullanıcı sepette ürün adedini arttırır
+    Then sepetteki toplam tutar birim tutarın 2 katı olmalıdır
