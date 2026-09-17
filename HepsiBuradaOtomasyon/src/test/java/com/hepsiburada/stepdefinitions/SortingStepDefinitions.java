@@ -5,16 +5,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.List;
+
 public class SortingStepDefinitions {
 
     private final SearchPage searchPage = new SearchPage();
-
-    private double savedPrice;
-
-    @And("kullanıcı ilk ürünün fiyatını kaydeder")
-    public void kullanici_ilk_urun_fiyatini_kaydeder() {
-        savedPrice = searchPage.getFirstProductPrice();
-    }
 
     @And("kullanıcı sonuçları {string} seçeneğine göre sıralar")
     public void kullanici_sonuclari_siralar(String sortOption) {
@@ -27,17 +22,29 @@ public class SortingStepDefinitions {
                 "Seçili sıralama beklenenle eşleşmiyor");
     }
 
-    @Then("ilk ürünün fiyatı kaydedilen fiyattan düşük olmalıdır")
-    public void ilk_urun_fiyati_daha_dusuk_olmalidir() {
-        double currentPrice = searchPage.getFirstProductPrice();
-        Assertions.assertTrue(currentPrice < savedPrice,
-                "Artan fiyat sıralamasından sonra ilk ürün daha ucuz değil: " + currentPrice + " >= " + savedPrice);
+    @Then("ürünler artan fiyata göre sıralanmış olmalıdır")
+    public void urunler_artan_fiyata_gore_siralanmalidir() {
+        assertSorted(true);
     }
 
-    @Then("ilk ürünün fiyatı kaydedilen fiyattan yüksek olmalıdır")
-    public void ilk_urun_fiyati_daha_yuksek_olmalidir() {
-        double currentPrice = searchPage.getFirstProductPrice();
-        Assertions.assertTrue(currentPrice > savedPrice,
-                "Azalan fiyat sıralamasından sonra ilk ürün daha pahalı değil: " + currentPrice + " <= " + savedPrice);
+    @Then("ürünler azalan fiyata göre sıralanmış olmalıdır")
+    public void urunler_azalan_fiyata_gore_siralanmalidir() {
+        assertSorted(false);
+    }
+
+    /**
+     * Varsayılan sıradaki ilk ürünle karşılaştırmak yerine (varsayılan sıra ucuz bir aksesuarla
+     * başlayabildiği için güvenilmez), listedeki ilk ürünlerin fiyatlarının gerçekten artan/azalan
+     * yönde sıralı olduğunu doğrular.
+     */
+    private void assertSorted(boolean ascending) {
+        List<Double> prices = searchPage.getFirstProductPrices(5);
+        for (int i = 1; i < prices.size(); i++) {
+            double prev = prices.get(i - 1);
+            double curr = prices.get(i);
+            boolean inOrder = ascending ? prev <= curr : prev >= curr;
+            Assertions.assertTrue(inOrder,
+                    (ascending ? "Artan" : "Azalan") + " fiyat sıralaması bozuk: " + prices);
+        }
     }
 }

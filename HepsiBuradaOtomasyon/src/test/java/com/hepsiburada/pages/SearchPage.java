@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -127,6 +128,36 @@ public class SearchPage extends BasePage {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(param);
+    }
+
+    /**
+     * Sonuç listesindeki ilk {@code limit} ürünün fiyatını (soldan sağa görünen sırayla) döndürür.
+     * Fiyat okuması reklam/sponsorlu kartlara denk gelmemesi için {@code li[class*='productListContent']}
+     * ile scope'lanmıştır. Liste aşamalı render edildiği ve yeniden render sırasında eleman stale
+     * olabildiği için, en az iki fiyat okunana kadar yeniden denenir.
+     */
+    public List<Double> getFirstProductPrices(int limit) {
+        return new WebDriverWait(driver, Duration.ofSeconds(15))
+                .ignoring(StaleElementReferenceException.class)
+                .until(d -> {
+                    List<WebElement> els = d.findElements(firstProductPrice);
+                    List<Double> prices = new ArrayList<>();
+                    for (WebElement el : els) {
+                        if (prices.size() >= limit) {
+                            break;
+                        }
+                        String text = el.getText().trim();
+                        if (text.isEmpty()) {
+                            continue;
+                        }
+                        try {
+                            prices.add(parsePrice(text));
+                        } catch (RuntimeException ignored) {
+                            // fiyatı ayrıştırılamayan kartı atla
+                        }
+                    }
+                    return prices.size() >= 2 ? prices : null;
+                });
     }
 
     public double getFirstProductPrice() {
