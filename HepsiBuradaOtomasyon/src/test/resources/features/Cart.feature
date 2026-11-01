@@ -10,6 +10,7 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     Then sepete ekleme onay mesajı görüntülenmelidir
     And sepet simgesindeki ürün sayısı "1" olmalıdır
 
+  @hesap-gerekli
   Scenario: Sepete eklenen ürünün sepetten çıkarılması
 
     Given kullanıcı Hepsiburada ana sayfasındadır
@@ -20,6 +21,7 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı sepetten ürünü çıkarır
     Then sepetin boş olduğu mesajı görüntülenmelidir
 
+  @hesap-gerekli
   Scenario: Sepetteki ürün adedinin arttırılması
 
     Given kullanıcı Hepsiburada ana sayfasındadır
@@ -30,6 +32,7 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı sepette ürün adedini arttırır
     Then sepetteki ürün adedi "2" olmalıdır
 
+  @hesap-gerekli
   Scenario: Sepetteki ürün adedinin azaltılması
 
     Given kullanıcı Hepsiburada ana sayfasındadır
@@ -41,6 +44,7 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı sepette ürün adedini azaltır
     Then sepetteki ürün adedi "1" olmalıdır
 
+  @hesap-gerekli
   Scenario: Sepette ürün adedi 1 iken azaltma butonunun görüntülenmemesi
 
     Given kullanıcı Hepsiburada ana sayfasındadır
@@ -61,7 +65,7 @@ Feature: Hepsiburada Sepete Ekleme İşlemleri
     And kullanıcı ürün detay sayfasında sepete ekle butonuna tıklar
     Then sepet simgesindeki ürün sayısı "2" olmalıdır
 
-  @sepet-tutar
+  @sepet-tutar @hesap-gerekli
   Scenario: Sepetteki toplam tutarın adet ile doğru hesaplanması
 
     Given kullanıcı Hepsiburada ana sayfasındadır
